@@ -1,19 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lofi.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Lofi.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    private readonly ITokenProvider _tokenProvider;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    [BindProperty]
+    public string Token { get; set; } = string.Empty;
+
+    public IndexModel(ITokenProvider tokenProvider)
     {
-        _logger = logger;
+        _tokenProvider = tokenProvider;
     }
 
     public void OnGet()
     {
-
+        Token = _tokenProvider.Token;
     }
 }
