@@ -1,10 +1,27 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    string PlaylistId = "pl.bf7a3cbca49644d8a33f09c1285aef5c";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <apple-music-artwork-lockup type="playlist" content-id="@PlaylistId"></apple-music-artwork-lockup>
 </div>
+
+<script>
+    var music;
+    document.addEventListener('musickitloaded', async function () {
+        try {
+            await MusicKit.configure({
+                developerToken: "@Model.Token",
+                app: {
+                    name: 'Lofi',
+                    build: '1.0.0',
+                },
+            });
+        } catch (err) {
+        }
+
+        music = MusicKit.getInstance(); 
+    });
+</script>

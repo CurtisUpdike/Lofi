@@ -19,4 +19,18 @@ html {
 
 body {
   margin-bottom: 60px;
+  height: 60vh;
+  background-color:darkslategrey;
+}
+
+.container,
+main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-end;
+}
+
+main {
+    align-items: center;
 }
