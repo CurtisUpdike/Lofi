@@ -4,13 +4,22 @@
     string PlaylistId = "pl.bf7a3cbca49644d8a33f09c1285aef5c";
 }
 
-<div>
+<div class="container">
     <apple-music-artwork-lockup type="playlist" content-id="@PlaylistId"></apple-music-artwork-lockup>
+    <button id="authButton">Login</button>
 </div>
 
 <script>
     var music;
-    document.addEventListener('musickitloaded', async function () {
+    const authButton = document.getElementById("authButton");
+
+
+    document.addEventListener('musickitloaded', configureMusicKit);
+    document.addEventListener("authorizationStatusDidChange", updateAuthButton);
+    authButton.addEventListener("click", changeAuthorization);
+
+
+    async function configureMusicKit() {
         try {
             await MusicKit.configure({
                 developerToken: "@Model.Token",
@@ -20,8 +29,18 @@
                 },
             });
         } catch (err) {
+
         }
 
-        music = MusicKit.getInstance(); 
-    });
+        music = await MusicKit.getInstance();
+        updateAuthButton();
+    }
+
+    function changeAuthorization() {
+        music.isAuthorized ? music.unauthorize() : music.authorize();
+    }
+
+    function updateAuthButton() {
+        authButton.textContent = music.isAuthorized ? "Logout" : "Login";
+    }
 </script>
