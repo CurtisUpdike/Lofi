@@ -1,4 +1,6 @@
-﻿using MusicToken;
+﻿using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 
 namespace Lofi.Services;
 
@@ -12,7 +14,7 @@ public class TokenProvider : ITokenProvider
 	{
 		get
 		{
-			return TokenGenerator.GenerateToken(_authKey, _teamId, _keyId, new TimeSpan(2, 0, 0));
+			return CreateToken(LoadPrivateKey(), new TimeSpan(2, 0, 0)); ;
 		}
 	}
 
@@ -35,4 +37,29 @@ public class TokenProvider : ITokenProvider
 			.Replace("\n", "");
 	}
 
+	private ECDsa LoadPrivateKey()
+	{
+		var privateKey = Convert.FromBase64String(_authKey);
+		var privateKeyECDsa = ECDsa.Create();
+		privateKeyECDsa.ImportPkcs8PrivateKey(privateKey, out _);
+		return privateKeyECDsa;
+	}
+
+	private string CreateToken(ECDsa ecdsa, TimeSpan timeSpan)
+	{
+		var now = DateTime.UtcNow;
+		var tokenHandler = new JwtSecurityTokenHandler();
+
+		var token = tokenHandler.CreateJwtSecurityToken(
+			issuer: _teamId,
+			subject: null,
+			notBefore: now,
+			expires: now.Add(timeSpan),
+			issuedAt: now,
+			signingCredentials: new SigningCredentials(
+				new ECDsaSecurityKey(ecdsa) { KeyId = _keyId },
+				SecurityAlgorithms.EcdsaSha256));
+
+		return tokenHandler.WriteToken(token);
+	}
 }
