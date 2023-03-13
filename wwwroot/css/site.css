@@ -37,8 +37,14 @@ button {
     border: none;
     color: white;
     background-color:brown;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     padding: 0.5rem;
     letter-spacing: 0.15rem;
     text-transform: uppercase;
+}
+
+#controls {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.75rem;
 }
