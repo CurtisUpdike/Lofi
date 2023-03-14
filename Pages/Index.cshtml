@@ -18,7 +18,6 @@
 
 
     document.addEventListener('musickitloaded', configureMusicKit);
-    document.addEventListener("authorizationStatusDidChange", updateAuthButton);
     authButton.addEventListener("click", changeAuthorization);
 
 
@@ -34,11 +33,12 @@
             music.setQueue({ playlist: "@PlaylistId" });
             music.shuffle = MusicKit.PlayerShuffleMode.songs;
             music.repeatMode = MusicKit.PlayerRepeatMode.all;
+            music.addEventListener("authorizationStatusDidChange", updateAuthButton);
+            updateAuthButton();
         } catch (err) {
 
         }
 
-        updateAuthButton();
     }
 
     function changeAuthorization() {
