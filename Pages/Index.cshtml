@@ -24,18 +24,20 @@
 
     async function configureMusicKit() {
         try {
-            await MusicKit.configure({
+            music = await MusicKit.configure({
                 developerToken: "@Model.Token",
                 app: {
                     name: 'Lofi',
                     build: '1.0.0',
                 },
             });
+            music.setQueue({ playlist: "@PlaylistId" });
+            music.shuffle = MusicKit.PlayerShuffleMode.songs;
+            music.repeatMode = MusicKit.PlayerRepeatMode.all;
         } catch (err) {
 
         }
 
-        music = await MusicKit.getInstance();
         updateAuthButton();
     }
 
