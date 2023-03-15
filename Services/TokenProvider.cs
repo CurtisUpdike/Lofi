@@ -16,9 +16,9 @@ public class TokenProvider : ITokenProvider
 
 	public TokenProvider(IConfiguration config)
 	{
-		var privateKey = config["Lofi:AuthKey"] ?? string.Empty;
-		var teamId = config["Lofi:TeamId"] ?? string.Empty;
-		var keyId = config["Lofi:KeyId"] ?? string.Empty;
+		var privateKey = config["Apple:PrivateKey"] ?? string.Empty;
+		var teamId = config["Apple:TeamId"] ?? string.Empty;
+		var keyId = config["Apple:KeyId"] ?? string.Empty;
 
 		_tokenGenerator = new TokenGenerator(privateKey, teamId, keyId);
 	}
