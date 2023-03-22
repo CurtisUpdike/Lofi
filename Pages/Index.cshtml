@@ -21,31 +21,36 @@
 
 <script>
     var music;
-    const authButton = document.getElementById("authButton");
+    const authButton = document.getElementById('authButton');
 
 
     document.addEventListener('musickitloaded', configureMusicKit);
-    authButton.addEventListener("click", changeAuthorization);
+    authButton.addEventListener('click', changeAuthorization);
+    function addMusicKitEventListeners() {
+        music.addEventListener('authorizationStatusDidChange', updateAuthButton);
+        music.addEventListener('metadataDidChange', updateMediaMetadata);
+        music.addEventListener('nowPlayingItemDidChange', updateMediaMetadata);
+    }
 
 
     async function configureMusicKit() {
         try {
             music = await MusicKit.configure({
-                developerToken: "@Model.Token",
+                developerToken: '@Model.Token',
                 app: {
                     name: 'Lofi',
                     build: '1.0.0',
                 },
             });
-            music.setQueue({ playlist: "@PlaylistId" });
+            addMusicKitEventListeners();
+            updateAuthButton();
+            music.setQueue({ playlist: '@PlaylistId' });
             music.shuffle = MusicKit.PlayerShuffleMode.songs;
             music.repeatMode = MusicKit.PlayerRepeatMode.all;
-            music.addEventListener("authorizationStatusDidChange", updateAuthButton);
-            updateAuthButton();
+            registerMediaSessionHandles();
         } catch (err) {
-
+            console.error(err);
         }
-
     }
 
     function changeAuthorization() {
@@ -53,6 +58,45 @@
     }
 
     function updateAuthButton() {
-        authButton.textContent = music.isAuthorized ? "Logout" : "Login";
+        authButton.textContent = music.isAuthorized ? 'Logout' : 'Login';
+    }
+
+    function updateMediaMetadata() {
+        if ('mediaSession' in navigator) {
+            if (!music.nowPlayingItem || !music.nowPlayingItem.attributes) return;
+            navigator.mediaSession.metadata = getMediaMetadata(music.nowPlayingItem);
+        }
+    }
+
+    function getMediaMetadata(nowPlayingItem) {
+        const data = nowPlayingItem.attributes;
+        return new MediaMetadata({
+            title: data.name || '',
+            artist: data.artistName || '',
+            album: data.albumName || '',
+            artwork: data.artwork ? [96, 128, 192, 256, 384, 512].map(size => ({
+                src: MusicKit.formatArtworkURL(data.artwork, size, size),
+                sizes:`${size}x${size}`,
+                type: 'image/jpeg'
+            })) : []
+        });
+    }
+
+    function registerMediaSessionHandles() {
+        navigator.mediaSession.setActionHandler('play', async function () {
+            await music.stop();
+            await music.play();
+        });
+
+        navigator.mediaSession.setActionHandler('pause', async function () {
+            await music.pause();
+        });
+
+        navigator.mediaSession.setActionHandler('previoustrack', async function () {
+            music.skipToPreviousItem();
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', async function () {
+            music.skipToNextItem();
+        });
     }
 </script>
