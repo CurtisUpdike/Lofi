@@ -5,9 +5,9 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
-  height: 65vh;
   background-color: #05362C;
+  padding-top: 100px;
+  padding-top: 30vh;
 }
 
 main {
@@ -25,8 +25,8 @@ main {
 button {
   border: none;
   color: white;
-  background-color:#B8161C;
-  margin-top: 0.5rem;
+  background-color:#B12123;
+  margin-bottom: 0.5rem;
   padding: 0.5rem;
   letter-spacing: 0.15rem;
   text-transform: uppercase;
